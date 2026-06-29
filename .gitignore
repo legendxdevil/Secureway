@@ -1,0 +1,26 @@
+# Database
+backend/secureway.db
+backend/secureway.db-journal
+
+# Go Binaries
+backend/main
+backend/main.exe
+backend/*.exe
+
+# Node dependencies
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Environment configurations
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+
+# OS specific files
+.DS_Store
+Thumbs.db

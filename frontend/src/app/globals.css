@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0b0f19;
+  --foreground: #f3f4f6;
+  --card: #131926;
+  --border: #1e293b;
+  --sage: #9dbdb8;
+  --cream: #f0e7d6;
+  --vermilion: #ea2e00;
+  
+  --critical: #ea2e00;
+  --high: #f97316;
+  --medium: #eab308;
+  --low: #3b82f6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-sage: var(--sage);
+  --color-cream: var(--cream);
+  --color-vermilion: var(--vermilion);
+  
+  --color-severity-critical: var(--critical);
+  --color-severity-high: var(--high);
+  --color-severity-medium: var(--medium);
+  --color-severity-low: var(--low);
+  
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", Courier, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Custom cybersecurity UI helper styles */
+@keyframes pulse-scan {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(157, 189, 184, 0.4);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 5px rgba(157, 189, 184, 0.1);
+  }
+}
+
+.animate-pulse-scan {
+  animation: pulse-scan 2s infinite ease-in-out;
+}
+
+@keyframes terminal-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.terminal-cursor::after {
+  content: "█";
+  margin-left: 2px;
+  animation: terminal-cursor 1s infinite;
+}
