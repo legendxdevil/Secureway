@@ -1,6 +1,64 @@
 # 🛡️ SecureWay — SaaS Cybersecurity & CI/CD DevSecOps Scan Simulator
 
 SecureWay is a state-of-the-art interactive SaaS simulator platform designed to help security engineers, developers, and compliance managers understand, execute, and monitor DevSecOps pipelines, static application security testing (SAST), and software composition analysis (SCA) workflows in real-time.
+---
+
+## 🗺️ System Architecture & Workflow Process
+
+Below is the end-to-end visual workflow of SecureWay—from user registration domain isolation, repository cryptographic verification gates, async WebSocket scanner loops, name-based priority heuristics, to policy evaluation checkpoints:
+
+```mermaid
+graph TD
+    %% Styling
+    classDef client fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff;
+    classDef server fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#f0f9ff;
+    classDef database fill:#111827,stroke:#fbbf24,stroke-width:2px,color:#f0f9ff;
+    classDef event fill:#1e1b4b,stroke:#f43f5e,stroke-width:2px,color:#f0f9ff;
+
+    %% Elements
+    User([Developer / Auditor]) -->|1. Sign Up| Reg[Auth Handler]
+    Reg -->|Extract domain| DomainCheck{Corporate Domain?}
+    DomainCheck -->|No| Reject[Reject Gmail/Consumer Domains]
+    DomainCheck -->|Yes| AutoMap[Auto-Map to Org & Workspace]
+    
+    User -->|2. Register Project| ConnectedProj[Project Dashboard]
+    ConnectedProj -->|Verified = False| Gated{Scan Request}
+    Gated -->|Trigger Scan| Blocked[403: Blocked / Unverified]
+    
+    User -->|3. Verify Ownership| TokenGen[Generate SHA-256 Token File]
+    TokenGen -->|Add to project root| UploadFile[Upload .txt File]
+    UploadFile -->|Evaluate file hash| CheckAttempts{Attempts >= 5?}
+    CheckAttempts -->|Yes| Lockout[429: Rate-Limited Lockout 15m]
+    CheckAttempts -->|No| CompareToken{Match Database Token?}
+    CompareToken -->|Match Success| VerifiedProj[Verified = True]
+    
+    User -->|4. Webhook / Push| VerifiedProj
+    VerifiedProj -->|Trigger Scan| JobRunner[Async Scanner Engine]
+    JobRunner -->|Verify execution runs| CheckRunning{Active Run?}
+    CheckRunning -->|Yes| BlockConcurrent[Abort Scan]
+    CheckRunning -->|No| InitScan[Compile & Setup]
+    
+    InitScan -->|Match stack rules| SelectTemplate[Filter Templates by Language]
+    SelectTemplate -->|Adjust weights| SensitiveWordCheck{Name contains auth/pay?}
+    SensitiveWordCheck -->|Yes| ShiftWeights[Scale Heuristics: High/Critical]
+    SensitiveWordCheck -->|No| NormalWeights[Standard Distribution]
+    
+    ShiftWeights & NormalWeights -->|Compile Scan Logs| LogStreamer[WebSocket Broadcaster]
+    LogStreamer -->|Real-time console updates| TerminalConsole[Client Console App]
+    
+    LogStreamer -->|Scan Finished| EvaluatePolicy{Evaluate Gate Policy}
+    EvaluatePolicy -->|Block rules met| GateFail[Compliance Gate: FAILED]
+    EvaluatePolicy -->|Rules clean| GatePass[Compliance Gate: PASSED]
+    
+    GateFail & GatePass -->|5. Stamp results & Audit| DB[(SQLite Database)]
+    DB -->|Fetch admin logs| AuditTrail[Immutable Logs Viewer]
+    
+    %% Applied Styles
+    class User,Reject,Blocked,Lockout,TerminalConsole client;
+    class Reg,DomainCheck,AutoMap,Gated,TokenGen,UploadFile,CheckAttempts,CompareToken,VerifiedProj,JobRunner,CheckRunning,BlockConcurrent,InitScan,SelectTemplate,SensitiveWordCheck,ShiftWeights,NormalWeights,LogStreamer,EvaluatePolicy,GateFail,GatePass server;
+    class DB database;
+    class AuditTrail event;
+```
 
 ---
 
